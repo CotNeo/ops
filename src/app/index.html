@@ -7,1297 +7,8 @@
     <title>Nginx Docker CI/CD Demo</title>
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <style>
-        :root {
-            /* Minimal Color Palette */
-            --primary: #2196F3;
-            --primary-dark: #1976D2;
-            --success: #4CAF50;
-            --warning: #FF9800;
-            --error: #F44336;
-            --background: #FAFAFA;
-            --surface: #FFFFFF;
-            --text: #212121;
-            --text-secondary: #757575;
-            
-            /* Spacing */
-            --spacing-xs: 0.5rem;
-            --spacing-sm: 1rem;
-            --spacing-md: 1.5rem;
-            --spacing-lg: 2rem;
-            
-            /* Shadows */
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
-            --shadow-md: 0 2px 4px rgba(0,0,0,0.1);
-            
-            /* Transitions */
-            --transition: 0.2s ease;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            line-height: 1.6;
-            color: var(--text);
-            background: var(--background);
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: var(--spacing-md);
-        }
-
-        /* Header */
-        .header {
-            background: var(--primary);
-            color: white;
-            padding: var(--spacing-lg) 0;
-            margin-bottom: var(--spacing-lg);
-        }
-
-        .header-content {
-            text-align: center;
-        }
-
-        .title {
-            font-size: 2rem;
-            margin-bottom: var(--spacing-sm);
-            font-weight: 500;
-        }
-
-        .subtitle {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            margin-bottom: var(--spacing-md);
-        }
-
-        /* Cards */
-        .card {
-            background: var(--surface);
-            border-radius: 8px;
-            padding: var(--spacing-md);
-            margin-bottom: var(--spacing-md);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .card-title {
-            font-size: 1.25rem;
-            margin-bottom: var(--spacing-sm);
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-xs);
-        }
-
-        /* Grid */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: var(--spacing-md);
-            margin-top: var(--spacing-md);
-        }
-
-        /* Feature Cards */
-        .feature {
-            background: var(--surface);
-            padding: var(--spacing-md);
-            border-radius: 8px;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .feature-title {
-            font-size: 1.1rem;
-            margin-bottom: var(--spacing-xs);
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-xs);
-        }
-
-        /* Status */
-        .status {
-            display: inline-flex;
-            align-items: center;
-            padding: var(--spacing-xs) var(--spacing-sm);
-            border-radius: 20px;
-            font-size: 0.875rem;
-            margin-bottom: var(--spacing-sm);
-            background: var(--success);
-            color: white;
-        }
-
-        /* Info Items */
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: var(--spacing-sm);
-            margin-top: var(--spacing-sm);
-        }
-
-        .info-item {
-            background: var(--background);
-            padding: var(--spacing-sm);
-            border-radius: 6px;
-        }
-
-        .info-label {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            margin-bottom: var(--spacing-xs);
-        }
-
-        .info-value {
-            font-weight: 500;
-        }
-
-        /* Endpoints */
-        .endpoint {
-            background: var(--background);
-            padding: var(--spacing-sm);
-            border-radius: 6px;
-            margin-bottom: var(--spacing-sm);
-            border-left: 3px solid var(--primary);
-        }
-
-        .endpoint-method {
-            display: inline-flex;
-            align-items: center;
-            padding: var(--spacing-xs) var(--spacing-sm);
-            background: rgba(33, 150, 243, 0.1);
-            border-radius: 4px;
-            color: var(--primary);
-            font-weight: 500;
-            margin-right: var(--spacing-sm);
-        }
-
-        /* Code Block */
-        .code {
-            background: #1E1E1E;
-            color: #D4D4D4;
-            padding: var(--spacing-md);
-            border-radius: 6px;
-            font-family: 'Fira Code', monospace;
-            margin: var(--spacing-sm) 0;
-            overflow-x: auto;
-        }
-
-        /* Buttons */
-        .buttons {
-            display: flex;
-            gap: var(--spacing-sm);
-            margin-top: var(--spacing-md);
-        }
-
-        .button {
-            display: inline-flex;
-            align-items: center;
-            padding: var(--spacing-sm) var(--spacing-md);
-            border-radius: 6px;
-            font-weight: 500;
-            text-decoration: none;
-            transition: var(--transition);
-            cursor: pointer;
-        }
-
-        .button-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .button-primary:hover {
-            background: var(--primary-dark);
-        }
-
-        .button-secondary {
-            background: var(--surface);
-            color: var(--primary);
-            border: 1px solid var(--primary);
-        }
-
-        .button-secondary:hover {
-            background: var(--primary);
-            color: white;
-        }
-
-        /* Footer */
-        .footer {
-            background: var(--surface);
-            padding: var(--spacing-lg) 0;
-            margin-top: var(--spacing-lg);
-            border-top: 1px solid rgba(0, 0, 0, 0.1);
-        }
-
-        .footer-content {
-            text-align: center;
-        }
-
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: var(--spacing-md);
-            margin-top: var(--spacing-sm);
-        }
-
-        .footer-link {
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: var(--transition);
-        }
-
-        .footer-link:hover {
-            color: var(--primary);
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .container {
-                padding: var(--spacing-sm);
-            }
-
-            .title {
-                font-size: 1.75rem;
-            }
-
-            .grid {
-                grid-template-columns: 1fr;
-            }
-
-            .buttons {
-                flex-direction: column;
-            }
-
-            .button {
-                width: 100%;
-                justify-content: center;
-            }
-        }
-
-        /* Quick Start Styles */
-        .quick-start-steps {
-            margin-top: var(--spacing-md);
-        }
-
-        .step {
-            background: var(--surface);
-            border-radius: 8px;
-            padding: var(--spacing-md);
-            margin-bottom: var(--spacing-md);
-            border-left: 4px solid var(--primary);
-        }
-
-        .step-header {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-sm);
-            margin-bottom: var(--spacing-sm);
-        }
-
-        .step-number {
-            background: var(--primary);
-            color: white;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 500;
-        }
-
-        .step h3 {
-            font-size: 1.1rem;
-            color: var(--text);
-            margin: 0;
-        }
-
-        .requirements {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: var(--spacing-sm);
-            margin-top: var(--spacing-sm);
-        }
-
-        .requirement {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-xs);
-            padding: var(--spacing-sm);
-            background: var(--background);
-            border-radius: 6px;
-        }
-
-        .requirement i {
-            color: var(--primary);
-        }
-
-        .env-variables {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: var(--spacing-sm);
-            margin-top: var(--spacing-sm);
-        }
-
-        .env-variable {
-            display: flex;
-            flex-direction: column;
-            padding: var(--spacing-sm);
-            background: var(--background);
-            border-radius: 6px;
-        }
-
-        .env-name {
-            font-family: 'Fira Code', monospace;
-            color: var(--primary);
-            font-size: 0.875rem;
-        }
-
-        .env-value {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-        }
-
-        .quick-start-actions {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: var(--spacing-md);
-            margin-top: var(--spacing-lg);
-        }
-
-        .action-card {
-            background: var(--surface);
-            padding: var(--spacing-md);
-            border-radius: 8px;
-            text-align: center;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .action-card i {
-            font-size: 2rem;
-            color: var(--primary);
-            margin-bottom: var(--spacing-sm);
-        }
-
-        .action-card h4 {
-            margin-bottom: var(--spacing-xs);
-            color: var(--text);
-        }
-
-        .action-card p {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-            margin-bottom: var(--spacing-sm);
-        }
-
-        @media (max-width: 768px) {
-            .quick-start-actions {
-                grid-template-columns: 1fr;
-            }
-
-            .requirements,
-            .env-variables {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Documentation Styles */
-        .docs-tabs {
-            margin-top: var(--spacing-md);
-        }
-
-        .tabs {
-            display: flex;
-            gap: var(--spacing-sm);
-            margin-bottom: var(--spacing-md);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-            padding-bottom: var(--spacing-sm);
-        }
-
-        .tab {
-            padding: var(--spacing-sm) var(--spacing-md);
-            border: none;
-            background: none;
-            color: var(--text-secondary);
-            cursor: pointer;
-            font-weight: 500;
-            transition: var(--transition);
-        }
-
-        .tab:hover {
-            color: var(--primary);
-        }
-
-        .tab.active {
-            color: var(--primary);
-            border-bottom: 2px solid var(--primary);
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .section-title {
-            font-size: 1.25rem;
-            color: var(--primary);
-            margin-bottom: var(--spacing-md);
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-sm);
-        }
-
-        .api-section,
-        .config-section,
-        .examples-section {
-            margin-bottom: var(--spacing-lg);
-        }
-
-        .endpoint-group {
-            margin-bottom: var(--spacing-md);
-        }
-
-        .endpoint-group h4 {
-            color: var(--text);
-            margin-bottom: var(--spacing-sm);
-        }
-
-        .response-example {
-            margin-top: var(--spacing-sm);
-            background: var(--background);
-            padding: var(--spacing-sm);
-            border-radius: 6px;
-        }
-
-        .response-example h5 {
-            color: var(--text-secondary);
-            margin-bottom: var(--spacing-xs);
-            font-size: 0.875rem;
-        }
-
-        .config-group {
-            margin-bottom: var(--spacing-lg);
-        }
-
-        .config-group h4 {
-            color: var(--text);
-            margin-bottom: var(--spacing-sm);
-        }
-
-        .config-item {
-            background: var(--background);
-            padding: var(--spacing-sm);
-            border-radius: 6px;
-            margin-bottom: var(--spacing-sm);
-        }
-
-        .config-name {
-            font-family: 'Fira Code', monospace;
-            color: var(--primary);
-            font-size: 0.875rem;
-            margin-bottom: var(--spacing-xs);
-        }
-
-        .config-description {
-            color: var(--text);
-            font-size: 0.875rem;
-            margin-bottom: var(--spacing-xs);
-        }
-
-        .config-default {
-            color: var(--text-secondary);
-            font-size: 0.75rem;
-        }
-
-        .example-group {
-            margin-bottom: var(--spacing-lg);
-        }
-
-        .example-group h4 {
-            color: var(--text);
-            margin-bottom: var(--spacing-sm);
-        }
-
-        @media (max-width: 768px) {
-            .tabs {
-                flex-direction: column;
-            }
-
-            .tab {
-                text-align: left;
-                padding: var(--spacing-sm);
-            }
-        }
-
-        /* Feature Details Styles */
-        .feature-details {
-            margin-top: var(--spacing-sm);
-            padding: var(--spacing-sm);
-            background: var(--background);
-            border-radius: 6px;
-        }
-
-        .feature-details h4 {
-            color: var(--text);
-            margin-bottom: var(--spacing-xs);
-            font-size: 0.875rem;
-        }
-
-        .feature-details ul {
-            list-style-type: none;
-            padding-left: 0;
-        }
-
-        .feature-details li {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            margin-bottom: var(--spacing-xs);
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-xs);
-        }
-
-        .feature-details li:before {
-            content: "•";
-            color: var(--primary);
-        }
-
-        /* Endpoint Details Styles */
-        .endpoint-details {
-            margin-top: var(--spacing-sm);
-            padding: var(--spacing-sm);
-            background: var(--background);
-            border-radius: 6px;
-        }
-
-        .endpoint-details h5 {
-            color: var(--text);
-            margin-bottom: var(--spacing-xs);
-            font-size: 0.875rem;
-        }
-
-        .endpoint-details ul {
-            list-style-type: none;
-            padding-left: 0;
-        }
-
-        .endpoint-details li {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            margin-bottom: var(--spacing-xs);
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-xs);
-        }
-
-        .endpoint-details li:before {
-            content: "•";
-            color: var(--primary);
-        }
-
-        /* Config Notes Styles */
-        .config-notes {
-            margin-top: var(--spacing-xs);
-            padding: var(--spacing-xs);
-            background: rgba(0, 0, 0, 0.02);
-            border-radius: 4px;
-        }
-
-        .config-notes p {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            margin: 0;
-        }
-
-        /* Example Details Styles */
-        .example-details {
-            margin-top: var(--spacing-sm);
-            padding: var(--spacing-sm);
-            background: var(--background);
-            border-radius: 6px;
-        }
-
-        .example-details h5 {
-            color: var(--text);
-            margin-bottom: var(--spacing-xs);
-            font-size: 0.875rem;
-        }
-
-        .example-details ul {
-            list-style-type: none;
-            padding-left: 0;
-        }
-
-        .example-details li {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            margin-bottom: var(--spacing-xs);
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-xs);
-        }
-
-        .example-details li:before {
-            content: "•";
-            color: var(--primary);
-        }
-
-        /* Official Documentation Styles */
-        .official-docs-section {
-            margin-bottom: var(--spacing-lg);
-        }
-
-        .docs-category {
-            margin-bottom: var(--spacing-lg);
-        }
-
-        .docs-category h4 {
-            color: var(--text);
-            margin-bottom: var(--spacing-md);
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-sm);
-        }
-
-        .docs-links {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: var(--spacing-md);
-        }
-
-        .docs-link {
-            display: flex;
-            align-items: flex-start;
-            gap: var(--spacing-sm);
-            padding: var(--spacing-sm);
-            background: var(--background);
-            border-radius: 6px;
-            text-decoration: none;
-            color: var(--text);
-            transition: var(--transition);
-        }
-
-        .docs-link:hover {
-            background: var(--surface);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .docs-link i {
-            color: var(--primary);
-            font-size: 1.5rem;
-        }
-
-        .docs-link-content {
-            display: flex;
-            flex-direction: column;
-            gap: var(--spacing-xs);
-        }
-
-        .docs-link-title {
-            font-weight: 500;
-            color: var(--text);
-        }
-
-        .docs-link-description {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-        }
-
-        @media (max-width: 768px) {
-            .docs-links {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Navigation Styles */
-        .nav {
-            background: var(--surface);
-            padding: var(--spacing-sm) 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 var(--spacing-md);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: var(--spacing-md);
-        }
-
-        .nav-link {
-            color: var(--text);
-            text-decoration: none;
-            font-weight: 500;
-            padding: var(--spacing-xs) var(--spacing-sm);
-            border-radius: 4px;
-            transition: var(--transition);
-        }
-
-        .nav-link:hover {
-            background: var(--background);
-            color: var(--primary);
-        }
-
-        .nav-link.active {
-            background: var(--primary);
-            color: white;
-        }
-
-        /* Documentation Styles */
-        .docs-section {
-            margin-bottom: var(--spacing-lg);
-        }
-
-        .docs-section h3 {
-            color: var(--primary);
-            margin-bottom: var(--spacing-sm);
-            font-size: 1.5rem;
-        }
-
-        .docs-section p {
-            margin-bottom: var(--spacing-md);
-            line-height: 1.8;
-        }
-
-        .docs-section ul {
-            list-style-type: none;
-            padding-left: var(--spacing-md);
-            margin-bottom: var(--spacing-md);
-        }
-
-        .docs-section li {
-            margin-bottom: var(--spacing-xs);
-            position: relative;
-            padding-left: var(--spacing-md);
-        }
-
-        .docs-section li:before {
-            content: "•";
-            color: var(--primary);
-            position: absolute;
-            left: 0;
-        }
-
-        .docs-section pre {
-            background: var(--background);
-            padding: var(--spacing-md);
-            border-radius: 6px;
-            overflow-x: auto;
-            margin-bottom: var(--spacing-md);
-        }
-
-        .docs-section code {
-            font-family: 'Fira Code', monospace;
-            background: var(--background);
-            padding: 2px 4px;
-            border-radius: 4px;
-            font-size: 0.9em;
-        }
-
-        /* Quick Start Styles */
-        .quick-start-steps {
-            counter-reset: step;
-        }
-
-        .quick-start-step {
-            background: var(--surface);
-            padding: var(--spacing-md);
-            border-radius: 8px;
-            margin-bottom: var(--spacing-md);
-            position: relative;
-            border-left: 4px solid var(--primary);
-        }
-
-        .quick-start-step:before {
-            counter-increment: step;
-            content: counter(step);
-            position: absolute;
-            left: -30px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 24px;
-            height: 24px;
-            background: var(--primary);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 500;
-        }
-
-        /* API Reference Styles */
-        .api-endpoint {
-            background: var(--surface);
-            padding: var(--spacing-md);
-            border-radius: 8px;
-            margin-bottom: var(--spacing-md);
-        }
-
-        .api-endpoint-header {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-sm);
-            margin-bottom: var(--spacing-sm);
-        }
-
-        .api-method {
-            padding: var(--spacing-xs) var(--spacing-sm);
-            border-radius: 4px;
-            font-weight: 500;
-            text-transform: uppercase;
-        }
-
-        .api-method.get {
-            background: #E3F2FD;
-            color: #1976D2;
-        }
-
-        .api-method.post {
-            background: #E8F5E9;
-            color: #2E7D32;
-        }
-
-        .api-method.put {
-            background: #FFF3E0;
-            color: #F57C00;
-        }
-
-        .api-method.delete {
-            background: #FFEBEE;
-            color: #C62828;
-        }
-
-        .api-path {
-            font-family: 'Fira Code', monospace;
-            color: var(--text);
-        }
-
-        .api-description {
-            margin-bottom: var(--spacing-md);
-            color: var(--text-secondary);
-        }
-
-        .api-response {
-            background: var(--background);
-            padding: var(--spacing-md);
-            border-radius: 6px;
-            margin-top: var(--spacing-sm);
-        }
-
-        .api-response pre {
-            margin: 0;
-            white-space: pre-wrap;
-        }
-
-        /* Configuration Styles */
-        .config-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: var(--spacing-md);
-        }
-
-        .config-table th,
-        .config-table td {
-            padding: var(--spacing-sm);
-            text-align: left;
-            border-bottom: 1px solid var(--background);
-        }
-
-        .config-table th {
-            background: var(--background);
-            font-weight: 500;
-        }
-
-        .config-table tr:hover {
-            background: var(--background);
-        }
-
-        /* Troubleshooting Styles */
-        .troubleshooting-item {
-            background: var(--surface);
-            padding: var(--spacing-md);
-            border-radius: 8px;
-            margin-bottom: var(--spacing-md);
-        }
-
-        .troubleshooting-item h4 {
-            color: var(--primary);
-            margin-bottom: var(--spacing-sm);
-        }
-
-        .troubleshooting-item p {
-            margin-bottom: var(--spacing-sm);
-        }
-
-        .troubleshooting-item ul {
-            margin-bottom: var(--spacing-sm);
-        }
-
-        /* Responsive Styles */
-        @media (max-width: 768px) {
-            .nav-container {
-                flex-direction: column;
-                gap: var(--spacing-sm);
-            }
-
-            .nav-links {
-                flex-direction: column;
-                width: 100%;
-            }
-
-            .nav-link {
-                text-align: center;
-            }
-
-            .config-table {
-                display: block;
-                overflow-x: auto;
-            }
-        }
-
-        /* Enhanced Footer Styles */
-        .footer {
-            background: var(--surface);
-            padding: var(--spacing-lg) 0;
-            margin-top: var(--spacing-lg);
-            border-top: 1px solid rgba(0, 0, 0, 0.1);
-        }
-
-        .footer-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: var(--spacing-lg);
-            margin-bottom: var(--spacing-lg);
-        }
-
-        .footer-section {
-            padding: var(--spacing-md);
-            background: rgba(0, 0, 0, 0.02);
-            border-radius: 8px;
-            transition: var(--transition);
-        }
-
-        .footer-section:hover {
-            background: rgba(0, 0, 0, 0.04);
-            transform: translateY(-2px);
-        }
-
-        .footer-section h4 {
-            color: var(--text);
-            margin-bottom: var(--spacing-sm);
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-xs);
-        }
-
-        .footer-section h4:before {
-            content: "";
-            display: block;
-            width: 4px;
-            height: 16px;
-            background: var(--primary);
-            border-radius: 2px;
-        }
-
-        .footer-links {
-            display: flex;
-            flex-direction: column;
-            gap: var(--spacing-sm);
-        }
-
-        .footer-link {
-            display: flex;
-            align-items: flex-start;
-            gap: var(--spacing-sm);
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: var(--transition);
-            padding: var(--spacing-sm);
-            border-radius: 6px;
-        }
-
-        .footer-link:hover {
-            background: rgba(0, 0, 0, 0.02);
-            color: var(--primary);
-        }
-
-        .footer-link i {
-            font-size: 1.2rem;
-            color: var(--primary);
-            margin-top: 2px;
-        }
-
-        .link-text {
-            font-weight: 500;
-            color: var(--text);
-        }
-
-        .link-description {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            margin-top: 2px;
-        }
-
-        .footer-bottom {
-            text-align: center;
-            padding-top: var(--spacing-md);
-            border-top: 1px solid rgba(0, 0, 0, 0.1);
-            margin-top: var(--spacing-md);
-        }
-
-        .footer-bottom-content {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .footer-bottom p {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-            margin: 0;
-        }
-
-        .footer-bottom-links {
-            display: flex;
-            justify-content: center;
-            gap: var(--spacing-sm);
-            margin: var(--spacing-sm) 0;
-        }
-
-        .footer-bottom-link {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 0.75rem;
-            transition: var(--transition);
-        }
-
-        .footer-bottom-link:hover {
-            color: var(--primary);
-        }
-
-        .separator {
-            color: var(--text-secondary);
-            opacity: 0.5;
-        }
-
-        .version {
-            margin-top: var(--spacing-xs);
-            font-size: 0.75rem;
-            opacity: 0.7;
-        }
-
-        @media (max-width: 768px) {
-            .footer-grid {
-                grid-template-columns: 1fr;
-                gap: var(--spacing-md);
-            }
-
-            .footer-section {
-                text-align: left;
-            }
-
-            .footer-links {
-                align-items: flex-start;
-            }
-
-            .footer-bottom-links {
-                flex-direction: column;
-                gap: var(--spacing-xs);
-            }
-
-            .separator {
-                display: none;
-            }
-        }
-
-        /* Legal Documents Styles */
-        .legal-document {
-            display: none;
-            padding: var(--spacing-lg);
-            background: var(--surface);
-            border-radius: 8px;
-            margin-top: var(--spacing-lg);
-            box-shadow: var(--shadow-md);
-        }
-
-        .legal-document h2 {
-            color: var(--primary);
-            margin-bottom: var(--spacing-md);
-        }
-
-        .legal-document p {
-            margin-bottom: var(--spacing-md);
-            line-height: 1.6;
-        }
-
-        .legal-document ul {
-            list-style-type: disc;
-            padding-left: var(--spacing-lg);
-            margin-bottom: var(--spacing-md);
-        }
-
-        .legal-document li {
-            margin-bottom: var(--spacing-xs);
-        }
-
-        /* Monitoring Section Styles */
-        .footer-section.monitoring {
-            background: rgba(33, 150, 243, 0.05);
-            overflow: hidden;
-        }
-
-        .footer-section.monitoring h4 {
-            color: #E6522C;
-            white-space: nowrap;
-        }
-
-        .footer-section.monitoring .footer-link {
-            white-space: normal;
-            word-wrap: break-word;
-        }
-
-        .footer-section.monitoring .footer-link:hover {
-            background: rgba(230, 82, 44, 0.1);
-        }
-
-        .footer-section.monitoring i {
-            color: #E6522C;
-            flex-shrink: 0;
-        }
-
-        .footer-section.monitoring .link-text {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .footer-section.monitoring .link-description {
-            flex: 1;
-            min-width: 0;
-        }
-
-        /* Value Proposition Styles */
-        .value-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: var(--spacing-lg);
-            margin-top: var(--spacing-lg);
-        }
-
-        .value-card {
-            background: var(--surface);
-            padding: var(--spacing-lg);
-            border-radius: 8px;
-            box-shadow: var(--shadow-sm);
-            transition: var(--transition);
-        }
-
-        .value-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .value-card i {
-            font-size: 2.5rem;
-            color: var(--primary);
-            margin-bottom: var(--spacing-sm);
-        }
-
-        .value-card h3 {
-            color: var(--text);
-            margin-bottom: var(--spacing-sm);
-            font-size: 1.25rem;
-        }
-
-        .value-card p {
-            color: var(--text-secondary);
-            margin-bottom: var(--spacing-md);
-        }
-
-        .value-card ul {
-            list-style-type: none;
-            padding-left: 0;
-        }
-
-        .value-card li {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-xs);
-            margin-bottom: var(--spacing-xs);
-            color: var(--text);
-            font-size: 0.875rem;
-        }
-
-        .value-card li:before {
-            content: "check_circle";
-            font-family: 'Material Icons';
-            color: var(--success);
-            font-size: 1rem;
-        }
-
-        /* Use Cases Styles */
-        .use-cases {
-            margin-top: var(--spacing-lg);
-        }
-
-        .use-cases h3 {
-            color: var(--primary);
-            margin-bottom: var(--spacing-md);
-            font-size: 1.5rem;
-        }
-
-        .use-case-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: var(--spacing-lg);
-        }
-
-        .use-case {
-            background: var(--surface);
-            padding: var(--spacing-md);
-            border-radius: 8px;
-            border-left: 4px solid var(--primary);
-        }
-
-        .use-case h4 {
-            color: var(--text);
-            margin-bottom: var(--spacing-sm);
-            font-size: 1.1rem;
-        }
-
-        .use-case p {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-            line-height: 1.6;
-        }
-
-        @media (max-width: 768px) {
-            .value-grid,
-            .use-case-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .value-card {
-                padding: var(--spacing-md);
-            }
-        }
-    </style>
+    <!-- External CSS -->
+    <link href="styles.css" rel="stylesheet">
 </head>
 <body>
     <nav class="nav">
@@ -1305,9 +16,13 @@
             <div class="nav-logo">
                 <h1>Nginx Docker CI/CD</h1>
             </div>
+            <button class="hamburger" aria-label="Menu">
+                <i class="material-icons">menu</i>
+            </button>
             <div class="nav-links">
                 <a href="#overview" class="nav-link">Genel Bakış</a>
                 <a href="#quick-start" class="nav-link">Hızlı Başlangıç</a>
+                <a href="#npm-usage" class="nav-link">NPM Kullanımı</a>
                 <a href="#documentation" class="nav-link">Dokümantasyon</a>
                 <a href="#api" class="nav-link">API</a>
                 <a href="#troubleshooting" class="nav-link">Sorun Giderme</a>
@@ -1400,6 +115,123 @@ nano .env</code></pre>
                     <p>Uygulamanın başarıyla çalıştığını doğrulayın:</p>
                     <pre><code>curl http://localhost:8080/health
 curl http://localhost:8080/metrics</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <section id="npm-usage" class="docs-section">
+            <h2>NPM Kullanımı</h2>
+            
+            <div class="npm-install">
+                <h3>Kurulum</h3>
+                <pre><code>npm install -g devops-starter-kit</code></pre>
+                <p>Global olarak kurulum yaparak CLI aracını sistem genelinde kullanabilirsiniz.</p>
+            </div>
+
+            <div class="npm-commands">
+                <h3>Komutlar</h3>
+                <div class="command-list">
+                    <div class="command-item">
+                        <h4>Proje Oluşturma</h4>
+                        <pre><code>devops-starter init [project-name]</code></pre>
+                        <p>Yeni bir proje oluşturur ve temel yapılandırmayı yapar.</p>
+                        <ul>
+                            <li>Proje tipi seçimi (Frontend, Backend, Full Stack)</li>
+                            <li>Özellik seçimi (Docker, GitHub Actions, Nginx, vb.)</li>
+                            <li>Otomatik konfigürasyon dosyaları oluşturma</li>
+                        </ul>
+                    </div>
+
+                    <div class="command-item">
+                        <h4>Deployment</h4>
+                        <pre><code>devops-starter deploy --environment [env]</code></pre>
+                        <p>Projeyi belirtilen ortama deploy eder.</p>
+                        <ul>
+                            <li>Ortam seçimi (development, staging, production)</li>
+                            <li>Otomatik build ve test süreçleri</li>
+                            <li>Docker imaj oluşturma ve push</li>
+                        </ul>
+                    </div>
+
+                    <div class="command-item">
+                        <h4>Monitoring</h4>
+                        <pre><code>devops-starter monitor</code></pre>
+                        <p>Monitoring araçlarını kurar ve yapılandırır.</p>
+                        <ul>
+                            <li>Prometheus kurulumu</li>
+                            <li>Grafana dashboard yapılandırması</li>
+                            <li>Alert kuralları oluşturma</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="npm-features">
+                <h3>Özellikler</h3>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <i class="material-icons">code</i>
+                        <h4>Proje Şablonları</h4>
+                        <p>Hazır proje şablonları ile hızlı başlangıç</p>
+                        <ul>
+                            <li>React/Vue frontend şablonları</li>
+                            <li>Node.js/Python backend şablonları</li>
+                            <li>Full Stack MERN/PERN şablonları</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card">
+                        <i class="material-icons">settings</i>
+                        <h4>Otomatik Konfigürasyon</h4>
+                        <p>Proje yapılandırmalarını otomatik oluşturma</p>
+                        <ul>
+                            <li>Docker ve Docker Compose dosyaları</li>
+                            <li>Nginx konfigürasyonları</li>
+                            <li>GitHub Actions workflow'ları</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card">
+                        <i class="material-icons">security</i>
+                        <h4>Güvenlik Araçları</h4>
+                        <p>Entegre güvenlik özellikleri</p>
+                        <ul>
+                            <li>Dependency güvenlik taraması</li>
+                            <li>OWASP güvenlik kontrolleri</li>
+                            <li>SSL/TLS yapılandırması</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card">
+                        <i class="material-icons">monitoring</i>
+                        <h4>Monitoring ve Logging</h4>
+                        <p>Kapsamlı izleme ve loglama</p>
+                        <ul>
+                            <li>Prometheus metrik toplama</li>
+                            <li>Grafana dashboard'ları</li>
+                            <li>ELK Stack entegrasyonu</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="npm-examples">
+                <h3>Örnek Kullanımlar</h3>
+                <div class="example-list">
+                    <div class="example-item">
+                        <h4>Frontend Projesi Oluşturma</h4>
+                        <pre><code>devops-starter init my-frontend --type frontend --features docker,nginx,github-actions</code></pre>
+                    </div>
+
+                    <div class="example-item">
+                        <h4>Backend Projesi Oluşturma</h4>
+                        <pre><code>devops-starter init my-backend --type backend --features docker,monitoring,security</code></pre>
+                    </div>
+
+                    <div class="example-item">
+                        <h4>Full Stack Projesi Oluşturma</h4>
+                        <pre><code>devops-starter init my-app --type fullstack --features all</code></pre>
+                    </div>
                 </div>
             </div>
         </section>
@@ -1597,74 +429,6 @@ nginx_http_requests_total 1234</pre>
                 <pre><code>curl -v http://localhost:8080/metrics</code></pre>
             </div>
         </section>
-
-        <section id="value-proposition" class="docs-section">
-            <h2>Neden Bu Proje?</h2>
-            
-            <div class="value-grid">
-                <div class="value-card">
-                    <i class="material-icons">speed</i>
-                    <h3>Hızlı Dağıtım</h3>
-                    <p>Modern web uygulamalarınızı hızlı ve güvenli bir şekilde dağıtın. CI/CD pipeline'ları ile otomatik deployment süreçleri.</p>
-                    <ul>
-                        <li>Otomatik build ve test süreçleri</li>
-                        <li>Hızlı rollback mekanizmaları</li>
-                        <li>Konteyner tabanlı dağıtım</li>
-                    </ul>
-                </div>
-
-                <div class="value-card">
-                    <i class="material-icons">security</i>
-                    <h3>Güvenli Altyapı</h3>
-                    <p>Güvenlik best practice'leri ile donatılmış altyapı. OWASP standartlarına uygun güvenlik önlemleri.</p>
-                    <ul>
-                        <li>Rate limiting ve DDoS koruması</li>
-                        <li>SSL/TLS şifreleme</li>
-                        <li>Güvenlik başlıkları ve IP kontrolü</li>
-                    </ul>
-                </div>
-
-                <div class="value-card">
-                    <i class="material-icons">monitoring</i>
-                    <h3>Kapsamlı İzleme</h3>
-                    <p>Uygulamanızın performansını ve sağlığını gerçek zamanlı izleyin. Detaylı metrikler ve log analizi.</p>
-                    <ul>
-                        <li>Prometheus ile metrik toplama</li>
-                        <li>Grafana ile görselleştirme</li>
-                        <li>ELK Stack ile log analizi</li>
-                    </ul>
-                </div>
-
-                <div class="value-card">
-                    <i class="material-icons">code</i>
-                    <h3>Geliştirici Dostu</h3>
-                    <p>Geliştiriciler için hazır altyapı. Hızlı başlangıç ve kolay entegrasyon.</p>
-                    <ul>
-                        <li>Detaylı dokümantasyon</li>
-                        <li>Örnek konfigürasyonlar</li>
-                        <li>Kolay özelleştirme</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="use-cases">
-                <h3>Kullanım Senaryoları</h3>
-                <div class="use-case-grid">
-                    <div class="use-case">
-                        <h4>Web Uygulaması Dağıtımı</h4>
-                        <p>Frontend ve backend uygulamalarınızı hızlıca dağıtın. Nginx reverse proxy ve Docker konteynerleri ile güvenli ve ölçeklenebilir altyapı.</p>
-                    </div>
-                    <div class="use-case">
-                        <h4>API Gateway</h4>
-                        <p>Mikroservis mimariniz için API gateway olarak kullanın. Rate limiting, SSL termination ve load balancing özellikleri.</p>
-                    </div>
-                    <div class="use-case">
-                        <h4>Statik İçerik Sunucusu</h4>
-                        <p>Yüksek performanslı statik içerik sunucusu. Gzip sıkıştırma ve önbellekleme özellikleri ile hızlı içerik dağıtımı.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
     </main>
 
     <footer class="footer">
@@ -1674,17 +438,17 @@ nginx_http_requests_total 1234</pre>
                     <div class="footer-section">
                         <h4>Proje</h4>
                         <div class="footer-links">
-                            <a href="https://github.com/CotNeo/ops" target="_blank" rel="noopener" class="footer-link">
+                            <a href="https://github.com/furkanaliakar/dev-ops" target="_blank" rel="noopener" class="footer-link">
                                 <i class="material-icons">code</i>
                                 <span class="link-text">GitHub</span>
                                 <span class="link-description">Kaynak kod ve katkıda bulunma</span>
                             </a>
-                            <a href="https://github.com/CotNeo/ops/wiki" target="_blank" rel="noopener" class="footer-link">
+                            <a href="https://github.com/furkanaliakar/dev-ops/wiki" target="_blank" rel="noopener" class="footer-link">
                                 <i class="material-icons">menu_book</i>
                                 <span class="link-text">Wiki</span>
                                 <span class="link-description">Detaylı dokümantasyon</span>
                             </a>
-                            <a href="https://github.com/CotNeo/ops/issues" target="_blank" rel="noopener" class="footer-link">
+                            <a href="https://github.com/furkanaliakar/dev-ops/issues" target="_blank" rel="noopener" class="footer-link">
                                 <i class="material-icons">bug_report</i>
                                 <span class="link-text">Sorunlar</span>
                                 <span class="link-description">Hata bildirimi ve destek</span>
@@ -1737,7 +501,7 @@ nginx_http_requests_total 1234</pre>
                     <div class="footer-section">
                         <h4>İletişim</h4>
                         <div class="footer-links">
-                            <a href="https://github.com/CotNeo" target="_blank" rel="noopener" class="footer-link">
+                            <a href="https://github.com/furkanaliakar" target="_blank" rel="noopener" class="footer-link">
                                 <i class="material-icons">code</i>
                                 <span class="link-text">GitHub</span>
                                 <span class="link-description">Geliştirici profili</span>
@@ -1839,7 +603,7 @@ nginx_http_requests_total 1234</pre>
             });
 
             // Health check
-            fetch('/health')
+            fetch('http://localhost:8080/health')
                 .then(response => response.json())
                 .then(data => {
                     document.querySelectorAll('.info-value').forEach(el => {
@@ -1850,10 +614,11 @@ nginx_http_requests_total 1234</pre>
                             }
                         }
                     });
-                });
+                })
+                .catch(error => console.error('Health check error:', error));
 
             // Metrics
-            fetch('/metrics')
+            fetch('http://localhost:8080/metrics')
                 .then(response => response.text())
                 .then(data => {
                     const metrics = {};
@@ -1871,7 +636,8 @@ nginx_http_requests_total 1234</pre>
                             }
                         }
                     });
-                });
+                })
+                .catch(error => console.error('Metrics error:', error));
 
             // Legal Documents Toggle
             document.querySelectorAll('.footer-bottom-link').forEach(link => {
@@ -1888,6 +654,34 @@ nginx_http_requests_total 1234</pre>
                     // Show selected document
                     targetDoc.style.display = 'block';
                     targetDoc.scrollIntoView({ behavior: 'smooth' });
+                });
+            });
+
+            // Hamburger Menu Toggle
+            const hamburger = document.querySelector('.hamburger');
+            const mobileNavLinks = document.querySelector('.nav-links');
+
+            hamburger.addEventListener('click', () => {
+                mobileNavLinks.classList.toggle('active');
+                const icon = hamburger.querySelector('i');
+                icon.textContent = mobileNavLinks.classList.contains('active') ? 'close' : 'menu';
+            });
+
+            // Close menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!hamburger.contains(e.target) && !mobileNavLinks.contains(e.target)) {
+                    mobileNavLinks.classList.remove('active');
+                    const icon = hamburger.querySelector('i');
+                    icon.textContent = 'menu';
+                }
+            });
+
+            // Close menu when clicking a nav link
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileNavLinks.classList.remove('active');
+                    const icon = hamburger.querySelector('i');
+                    icon.textContent = 'menu';
                 });
             });
         });
