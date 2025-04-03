@@ -1,0 +1,65 @@
+# Docker Compose dosyası
+# Bu dosya, uygulamanın konteynerlerini ve servislerini tanımlar
+
+version: '3.8'
+
+# Servisler bloğu
+services:
+  nginx:
+    build: .
+    container_name: nginx-docker-cicd
+    ports:
+      - "${NGINX_PORT:-8080}:80"
+    volumes:
+      - ./src/app:/usr/share/nginx/html
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/logs:/var/log/nginx
+    environment:
+      - NGINX_WORKER_PROCESSES=${NGINX_WORKER_PROCESSES:-auto}
+      - NGINX_WORKER_CONNECTIONS=${NGINX_WORKER_CONNECTIONS:-1024}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
+    restart: unless-stopped
+    networks:
+      - app-network
+
+# Volume tanımlamaları
+volumes:
+  prometheus_data:
+  grafana_data:
+
+# Ağ tanımlamaları
+networks:
+  app-network:
+    driver: bridge 
