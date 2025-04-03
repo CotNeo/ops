@@ -17,48 +17,31 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
+      # Build the Docker image first
       - name: Build Docker image
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          load: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/nginx-docker-cicd:test
+        run: |
+          docker build -t nginx-docker-cicd:test .
+          docker images
 
-      - name: Run Snyk to check Docker image for vulnerabilities
+      # Run Snyk test
+      - name: Run Snyk to check for vulnerabilities
         uses: snyk/actions/docker@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          image: ${{ secrets.DOCKERHUB_USERNAME }}/nginx-docker-cicd:test
-          args: --severity-threshold=high
+          image: nginx-docker-cicd:test
 
-  deploy:
-    needs: build-and-scan
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
+      # If scan passes, push to Docker Hub
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/nginx-docker-cicd:latest
+      - name: Tag and push image
+        run: |
+          docker tag nginx-docker-cicd:test ${{ secrets.DOCKERHUB_USERNAME }}/nginx-docker-cicd:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/nginx-docker-cicd:latest
 
       - name: Deploy to production
         run: |
